@@ -3,6 +3,8 @@ import Image from 'react-bootstrap/Image';
 import Stack from 'react-bootstrap/Stack';
 import { Link } from 'react-router-dom';
 
+import TimeAgo from './TimeAgo';
+
 export default function Post({ post }) {
   return (
     <Stack direction="horizontal" gap={3} className="Post">
@@ -11,7 +13,7 @@ export default function Post({ post }) {
         <p>
           <Link to={'/user/' + post.author.username}>{post.author.username}</Link>
           &nbsp;&mdash;&nbsp;
-          {post.timestamp}
+          <TimeAgo isoDate={post.timestamp} />
         </p>
         <p>{post.text}</p>
       </div>
