@@ -1,9 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import { useNavigate } from 'react-router-dom';
 
 import Body from '../components/Body';
 import InputField from '../components/InputField';
+import { useApi } from '../contexts/ApiProvider';
+import { useFlash } from '../contexts/FlashProvider';
 
 export default function RegistrationPage() {
   const [formErrors, setFormErrors] = useState({});
@@ -11,13 +14,32 @@ export default function RegistrationPage() {
   const emailField = useRef();
   const passwordField = useRef();
   const password2Field = useRef();
+  const navigate = useNavigate();
+  const api = useApi();
+  const flash = useFlash();
 
   useEffect(() => {
     usernameField.current.focus();
   }, []);
 
   const onSubmit = async (event) => {
-    // TODO
+    event.preventDefault();
+    if (passwordField.current.value !== password2Field.current.value) {
+      setFormErrors({ password2: "Passwords don't match" });
+    } else {
+      const data = await api.post('/users', {
+        username: usernameField.current.value,
+        email: emailField.current.value,
+        password: passwordField.current.value,
+      });
+      if (!data.ok) {
+        setFormErrors(data.body.errors.json);
+      } else {
+        setFormErrors({});
+        flash('You have successfully registered!', 'success');
+        navigate('/login');
+      }
+    }
   };
 
   return (
